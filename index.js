@@ -1,12 +1,16 @@
-var express = require('express');
 var config = require('./config')[process.env.NODE_ENV || 'development'];
 
-var app = express();
+var mongo = require('mongodb').MongoClient;
 
-app.get('/', function(req, res) {
-  res.send({ message: 'Here we be!' });
-});
+mongo.connect(config.mongoUrl, function(err, db) {
+  if(err) {
+    return console.error('Could not connect to mongo:', err);
+  }
 
-var server = app.listen(config.port, function() {
-  console.log('Server started on port %s', server.address().port);
+  console.log('Connected to mongo.');
+
+  var app = require('./app')(db);
+  var server = app.listen(config.port, function() {
+    console.log('Server started on port %s', server.address().port);
+  });
 });

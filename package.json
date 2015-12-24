@@ -21,6 +21,9 @@
   },
   "homepage": "https://github.com/msrose/highscore-api#readme",
   "dependencies": {
-    "express": "^4.13.3"
+    "body-parser": "^1.14.2",
+    "express": "^4.13.3",
+    "kerberos": "0.0.17",
+    "mongodb": "^2.1.2"
   }
 }

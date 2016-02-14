@@ -13,19 +13,17 @@ exports.index = function(req, res, next) {
 };
 
 exports.create = function(req, res, next) {
-  var user = req.body;
-
-  if(!user.name) {
+  if(!req.body.name) {
     return res.status(400).send({ message: 'Name required.' });
   }
+
+  var user = { name: req.body.name };
 
   var users = db.collection('users');
   users.insert(user, function(err, result) {
     if(err) {
       return next(err);
     }
-    console.log('Inserted user', user);
     res.send(result.ops[0]);
   });
 };
-

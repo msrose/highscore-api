@@ -9,7 +9,7 @@ connect(config.mongoUrl, function(err, db) {
   }
   console.log('Connected to mongo.');
 
-  var app = require('./app/express')(db);
+  var app = require('./app/express')();
   var server = app.listen(config.port, function() {
     console.log('Server started on port %s', server.address().port);
   });

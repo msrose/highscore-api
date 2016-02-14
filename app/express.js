@@ -3,13 +3,15 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 
-module.exports = function(db) {
+module.exports = function() {
   var app = express();
 
-  app.use(function(req, res, next) {
-    console.log(req.method, req.url);
-    next();
-  });
+  if(process.env.NODE_ENV === 'development') {
+    app.use(function(req, res, next) {
+      console.log(req.method, req.url);
+      next();
+    });
+  }
 
   app.use(bodyParser.json());
 

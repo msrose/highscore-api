@@ -1,15 +1,15 @@
-var config = require('./config')[process.env.NODE_ENV || 'development'];
+'use strict';
 
-var mongo = require('mongodb').MongoClient;
+var config = require('./config/config');
+var connect = require('./app/mongo');
 
-mongo.connect(config.mongoUrl, function(err, db) {
+connect(config.mongoUrl, function(err, db) {
   if(err) {
     return console.error('Could not connect to mongo:', err);
   }
-
   console.log('Connected to mongo.');
 
-  var app = require('./app')(db);
+  var app = require('./app/express')(db);
   var server = app.listen(config.port, function() {
     console.log('Server started on port %s', server.address().port);
   });

@@ -1,9 +1,9 @@
 'use strict';
 
-var users = require('./controllers/users');
-var index = require('./controllers/index');
+const users = require('./controllers/users');
+const index = require('./controllers/index');
 
-module.exports = function(app) {
+module.exports = (app) => {
   app.route('/')
     .get(index.info);
 

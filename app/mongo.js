@@ -1,12 +1,12 @@
 'use strict';
 
-var mongo = require('mongodb').MongoClient;
+const mongo = require('mongodb').MongoClient;
 
-var connection;
+let connection;
 
-module.exports = function(url, callback) {
+module.exports = (url, callback) => {
   if(!connection) {
-    mongo.connect(url, function(err, db) {
+    mongo.connect(url, (err, db) => {
       if(err) {
         return callback(err);
       }

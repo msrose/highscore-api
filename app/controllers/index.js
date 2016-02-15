@@ -1,7 +1,7 @@
 'use strict';
 
-var config = require('../../config/config');
+const config = require('../../config/config');
 
-exports.info = function(req, res, next) {
+exports.info = (req, res, next) => {
   res.send({ version: config.version });
 };

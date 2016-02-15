@@ -1,16 +1,16 @@
 'use strict';
 
-var config = require('./config/config');
-var connect = require('./app/mongo');
+const config = require('./config/config');
+const connect = require('./app/mongo');
 
-connect(config.mongoUrl, function(err, db) {
+connect(config.mongoUrl, (err, db) => {
   if(err) {
     return console.error('Could not connect to mongo:', err);
   }
   console.log('Connected to mongo.');
 
-  var app = require('./app/express')();
-  var server = app.listen(config.port, function() {
+  let app = require('./app/express')();
+  let server = app.listen(config.port, () => {
     console.log('Server started on port %s', server.address().port);
   });
 });

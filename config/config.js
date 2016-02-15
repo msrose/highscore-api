@@ -1,9 +1,8 @@
 'use strict';
 
-var _ = require('lodash');
-var pkg = require('../package.json');
+const pkg = require('../package.json');
 
-var config = {
+const config = {
   all: {
     port: 1337,
     version: pkg.version
@@ -24,5 +23,9 @@ var config = {
   }
 };
 
-var envConfig = config[process.env.NODE_ENV || 'development'];
-module.exports = _.extend(config.all, envConfig);
+if(!process.env.NODE_ENV) {
+  process.env.NODE_ENV = 'development';
+}
+
+let envConfig = config[process.env.NODE_ENV];
+module.exports = Object.assign(config.all, envConfig);

@@ -24,10 +24,10 @@
   "homepage": "https://github.com/msrose/highscore-api#readme",
   "dependencies": {
     "body-parser": "^1.14.2",
+    "cors": "^2.7.1",
     "express": "^4.13.3",
     "helmet": "^1.1.0",
     "kerberos": "0.0.17",
-    "lodash": "^4.3.0",
     "mongodb": "^2.1.2",
     "morgan": "^1.6.1"
   },

@@ -1,5 +1,8 @@
 # High Score API
 
+[![Dependency Status](https://david-dm.org/msrose/highscore-api.svg)](https://david-dm.org/msrose/highscore-api)
+[![devDependency Status](https://david-dm.org/msrose/highscore-api/dev-status.svg)](https://david-dm.org/msrose/highscore-api#info=devDependencies)
+
 ## Development Setup
 
 ```

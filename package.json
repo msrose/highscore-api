@@ -6,7 +6,7 @@
   "scripts": {
     "start": "nodemon index.js",
     "test": "node spec/support/runner",
-    "lint": "eslint index.js app/**/*.js spec/**/*.js config/**/*.js"
+    "lint": "eslint index.js {app,spec,config}/*{,*/*}.js"
   },
   "repository": {
     "type": "git",

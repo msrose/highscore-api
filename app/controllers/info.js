@@ -2,6 +2,6 @@
 
 const config = require('../../config/config');
 
-exports.info = (req, res, next) => {
+exports.version = (req, res, next) => {
   res.send({ version: config.version });
 };

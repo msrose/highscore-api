@@ -25,6 +25,7 @@
   "dependencies": {
     "body-parser": "^1.14.2",
     "express": "^4.13.3",
+    "helmet": "^1.1.0",
     "kerberos": "0.0.17",
     "lodash": "^4.3.0",
     "mongodb": "^2.1.2",

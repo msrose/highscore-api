@@ -27,7 +27,8 @@
     "express": "^4.13.3",
     "kerberos": "0.0.17",
     "lodash": "^4.3.0",
-    "mongodb": "^2.1.2"
+    "mongodb": "^2.1.2",
+    "morgan": "^1.6.1"
   },
   "devDependencies": {
     "eslint": "^2.0.0",

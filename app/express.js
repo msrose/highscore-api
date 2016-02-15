@@ -2,16 +2,13 @@
 
 const express = require('express');
 const bodyParser = require('body-parser');
+const morgan = require('morgan');
+const config = require('../config/config');
 
 module.exports = () => {
   let app = express();
 
-  if(process.env.NODE_ENV === 'development') {
-    app.use((req, res, next) => {
-      console.log(req.method, req.url);
-      next();
-    });
-  }
+  app.use(morgan(config.httpLogFormat));
 
   app.use(bodyParser.json());
 

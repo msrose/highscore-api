@@ -5,13 +5,16 @@ const pkg = require('../package.json');
 const config = {
   all: {
     port: 1337,
-    version: pkg.version
+    version: pkg.version,
+    httpLogFormat: 'combined'
   },
   development: {
-    mongoUrl: 'mongodb://localhost:27017/highscoreapi'
+    mongoUrl: 'mongodb://localhost:27017/highscoreapi',
+    httpLogFormat: 'dev'
   },
   test: {
-    mongoUrl: 'mongodb://localhost:27017/highscoreapitest'
+    mongoUrl: 'mongodb://localhost:27017/highscoreapitest',
+    httpLogFormat: () => {}
   },
   staging: {
     port: process.env.PORT,

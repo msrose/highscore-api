@@ -1,8 +1,9 @@
 'use strict';
 
-const request = require('supertest');
-const db = require('../app/mongo')();
-const app = require('../app/express')();
+const helper = require('./specHelper');
+const request = helper.request;
+const db = helper.db;
+const app = helper.app;
 
 describe('Users endpoints', () => {
   describe('POST /users', () => {

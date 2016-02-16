@@ -1,26 +1,23 @@
 'use strict';
 
+const middleware = require('./middleware');
 const users = require('./controllers/users');
-const index = require('./controllers/info');
+const info = require('./controllers/info');
 
 module.exports = (app) => {
+  app.route('/').get(info.routes(app));
+
   app.route('/version')
-    .get(index.version);
+    .get(info.version);
 
   app.route('/users')
     .get(users.index)
     .post(users.create);
 
-  app.route('/').get((req, res, next) => {
-    let routes = [];
-    app._router.stack.forEach((r) => {
-      if(r.route) {
-        routes.push({
-          path: r.route.path,
-          methods: r.route.methods
-        });
-      }
-    });
-    res.send({ routes });
-  });
+  app.route('/users/:id')
+    .get(users.show)
+    .put(users.update)
+    .delete(users.delete);
+
+  app.param('id', middleware.validateId);
 };

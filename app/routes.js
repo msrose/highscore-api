@@ -14,10 +14,11 @@ module.exports = (app) => {
     .get(users.index)
     .post(users.create);
 
-  app.route('/users/:id')
+  app.route('/users/:userId')
     .get(users.show)
     .put(users.update)
     .delete(users.delete);
 
-  app.param('id', middleware.validateId);
+  app.param('userId', middleware.validateId('userId'));
+  app.param('userId', users.findById);
 };

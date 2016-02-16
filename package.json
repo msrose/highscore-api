@@ -22,6 +22,10 @@
     "url": "https://github.com/msrose/highscore-api/issues"
   },
   "homepage": "https://github.com/msrose/highscore-api#readme",
+  "engines": {
+    "node": ">= 5.6.0",
+    "npm": ">= 3.6.0"
+  },
   "dependencies": {
     "body-parser": "^1.14.2",
     "cors": "^2.7.1",

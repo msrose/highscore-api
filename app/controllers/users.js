@@ -14,7 +14,7 @@ exports.index = (req, res, next) => {
 
 exports.create = (req, res, next) => {
   if(!req.body.name) {
-    return res.status(400).send({ message: 'Name required.' });
+    return res.status(400).send({ message: 'Name required' });
   }
   let user = { name: req.body.name };
   users.insertOne(user).then((result) => {
@@ -22,44 +22,39 @@ exports.create = (req, res, next) => {
   }, next);
 };
 
-function notFound(id) {
-  return { message: `No user found with id "${id}"` };
-}
-
-exports.show = (req, res, next) => {
-  let id = req.params.id;
+exports.findById = (req, res, next) => {
+  let id = req.params.userId;
   users.findOne({ _id: id }).then((user) => {
     if(!user) {
-      return res.status(404).send(notFound(id));
+      return res.status(404).send({ message: `No user found with id "${id}"` });
     }
-    res.send(user);
+    req.user = user;
+    next();
   }, next);
+};
+
+exports.show = (req, res, next) => {
+  res.send(req.user);
 };
 
 exports.update = (req, res, next) => {
   if(!req.body.name) {
     return res.status(400).send({ message: 'Must provide a valid name' });
   }
-  let id = req.params.id;
+  let id = req.user._id;
   let params = [
     { _id: id },
     { $set: { name: req.body.name } },
     { returnOriginal: false }
   ];
   users.findOneAndUpdate.apply(users, params).then((result) => {
-    if(!result.value) {
-      return res.status(404).send(notFound(id));
-    }
     res.send(result.value);
   }, next);
 };
 
 exports.delete = (req, res, next) => {
-  let id = req.params.id;
-  users.findOneAndDelete({ _id: id }).then((result) => {
-    if(!result.value) {
-      return res.status(404).send(notFound(id));
-    }
-    res.send(result.value);
+  let id = req.user._id;
+  users.deleteOne({ _id: id }).then((result) => {
+    res.send(req.user);
   }, next);
 };

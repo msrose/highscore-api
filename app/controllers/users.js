@@ -14,7 +14,7 @@ exports.index = (req, res, next) => {
 
 exports.create = (req, res, next) => {
   if(!req.body.name) {
-    return res.status(400).send({ message: 'Name required' });
+    return next({ status: 400, message: 'Name required' });
   }
   let user = { name: req.body.name };
   users.insertOne(user).then((result) => {
@@ -26,7 +26,7 @@ exports.findById = (req, res, next) => {
   let id = req.params.userId;
   users.findOne({ _id: id }).then((user) => {
     if(!user) {
-      return res.status(404).send({ message: `No user found with id "${id}"` });
+      return next({ status: 404, message: `No user found with id "${id}"` });
     }
     req.user = user;
     next();
@@ -39,7 +39,7 @@ exports.show = (req, res, next) => {
 
 exports.update = (req, res, next) => {
   if(!req.body.name) {
-    return res.status(400).send({ message: 'Must provide a valid name' });
+    return next({ status: 400, message: 'Must provide a valid name' });
   }
   let id = req.user._id;
   let params = [

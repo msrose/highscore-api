@@ -3,6 +3,7 @@
 const gulp = require('gulp');
 const nodemon = require('gulp-nodemon');
 const eslint = require('gulp-eslint');
+const spawn = require('child_process').spawn;
 
 const jsFiles = [
   'gulpfile.js',
@@ -14,8 +15,12 @@ gulp.task('start', () => {
   nodemon({ script: 'index.js' });
 });
 
+gulp.task('test', (done) => {
+  spawn('node', ['spec/support/runner'], { stdio: 'inherit' }).on('close', done);
+});
+
 gulp.task('lint', () => {
-  gulp.src(jsFiles)
+  return gulp.src(jsFiles)
     .pipe(eslint())
     .pipe(eslint.format());
 });

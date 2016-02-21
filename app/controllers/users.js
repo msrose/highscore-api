@@ -25,7 +25,7 @@ exports.validateBody = (req, res, next) => {
       validate: (value) => value !== undefined && value !== null && value !== ''
     },
     email: {
-      validate: (value) => value.length >= 3 && value.indexOf('@') !== -1
+      validate: (value) => value && value.length >= 3 && value.indexOf('@') !== -1
     }
   };
   for(let prop in req.body) {

@@ -8,7 +8,8 @@ exports.index = (req, res, next) => {
     if(err) {
       return next(err);
     }
-    res.send({ users });
+    req.responseData = { users };
+    next();
   });
 };
 
@@ -18,7 +19,8 @@ exports.create = (req, res, next) => {
   }
   let user = { name: req.body.name };
   users.insertOne(user).then((result) => {
-    res.send(result.ops[0]);
+    req.responseData = { user: result.ops[0] };
+    next();
   }, next);
 };
 
@@ -34,7 +36,8 @@ exports.findById = (req, res, next) => {
 };
 
 exports.show = (req, res, next) => {
-  res.send(req.user);
+  req.responseData = { user: req.user };
+  next();
 };
 
 exports.update = (req, res, next) => {
@@ -48,13 +51,15 @@ exports.update = (req, res, next) => {
     { returnOriginal: false }
   ];
   users.findOneAndUpdate.apply(users, params).then((result) => {
-    res.send(result.value);
+    req.responseData = { user: result.value };
+    next();
   }, next);
 };
 
 exports.delete = (req, res, next) => {
   let id = req.user._id;
   users.deleteOne({ _id: id }).then((result) => {
-    res.send(req.user);
+    req.responseData = { user: req.user };
+    next();
   }, next);
 };

@@ -25,20 +25,33 @@ module.exports = () => {
     if(res.headersSent) {
       return next(err);
     }
-    err.status = err.status || 500;
-    res.status(err.status).send({
-      message: err.message || 'Something went wrong!'
-    });
-    if(err.status === 500) {
+    req.responseStatus = err.status || 500;
+    if(req.responseStatus >= 500) {
       logger.error(err.stack);
     }
+    req.responseError = {
+      message: err.message || 'Something went wrong!',
+    };
+    next();
   });
 
   app.use((req, res, next) => {
-    res.status(404).send({
-      url: req.url,
-      message: 'Not Found'
-    });
+    let status = req.responseStatus || 200;
+    let responseBody = {
+      _links: {
+        self: { href: req.url }
+      }
+    };
+    if(req.responseData) {
+      responseBody.data = req.responseData;
+    } else if(req.responseError) {
+      req.responseError.status = status;
+      responseBody.error = req.responseError;
+    } else {
+      status = 404;
+      responseBody.error = { message: 'Not found', status };
+    }
+    res.status(status).send(responseBody);
   });
 
   return app;

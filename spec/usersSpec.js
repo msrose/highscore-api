@@ -16,9 +16,9 @@ describe('Users endpoints', () => {
       .expect(200)
       .end((err, res) => {
         expect(err).toBeNull();
-        expect(res.body.name).toBe('michael');
-        expect(res.body._id).toBeTruthy();
-        users.findOne({ _id: ObjectID(res.body._id) }).then((user) => {
+        expect(res.body.data.user.name).toBe('michael');
+        expect(res.body.data.user._id).toBeTruthy();
+        users.findOne({ _id: ObjectID(res.body.data.user._id) }).then((user) => {
           expect(user.name).toBe('michael');
         }).then(done, done.fail);
       });
@@ -31,7 +31,7 @@ describe('Users endpoints', () => {
       .expect(400)
       .end((err, res) => {
         expect(err).toBeNull();
-        expect(res.body.message).toBeTruthy();
+        expect(res.body.error.message).toBeTruthy();
         done();
       });
     });
@@ -43,7 +43,7 @@ describe('Users endpoints', () => {
       .expect(400)
       .end((err, res) => {
         expect(err).toBeNull();
-        expect(res.body.message).toBeTruthy();
+        expect(res.body.error.message).toBeTruthy();
         done();
       });
     });
@@ -60,7 +60,7 @@ describe('Users endpoints', () => {
       .expect(200)
       .end((err, res) => {
         expect(err).toBeNull();
-        let names = res.body.users.map(user => user.name);
+        let names = res.body.data.users.map(user => user.name);
         expect(names).toContain('hero boy');
         done();
       });
@@ -76,7 +76,7 @@ describe('Users endpoints', () => {
         .expect(200)
         .end((err, res) => {
           expect(err).toBeNull();
-          expect(res.body.name).toBe('hero baby');
+          expect(res.body.data.user.name).toBe('hero baby');
           done();
         });
       }, done.fail);
@@ -88,7 +88,7 @@ describe('Users endpoints', () => {
       .expect(400)
       .end((err, res) => {
         expect(err).toBeNull();
-        expect(res.body.message).toBeTruthy();
+        expect(res.body.error.message).toBeTruthy();
         done();
       });
     });
@@ -100,7 +100,7 @@ describe('Users endpoints', () => {
         .expect(404)
         .end((err, res) => {
           expect(err).toBeNull();
-          expect(res.body.message).toBeTruthy();
+          expect(res.body.error.message).toBeTruthy();
           done();
         });
       }, done.fail);
@@ -123,8 +123,8 @@ describe('Users endpoints', () => {
       .expect(200)
       .end((err, res) => {
         expect(err).toBeNull();
-        expect(res.body.name).toBe('new name');
-        users.findOne({ _id: ObjectID(res.body._id) }).then((user) => {
+        expect(res.body.data.user.name).toBe('new name');
+        users.findOne({ _id: ObjectID(res.body.data.user._id) }).then((user) => {
           expect(user.name).toBe('new name');
         }).then(done, done.fail);
       });
@@ -137,7 +137,7 @@ describe('Users endpoints', () => {
       .expect(400)
       .end((err, res) => {
         expect(err).toBeNull();
-        expect(res.body.message).toBeTruthy();
+        expect(res.body.error.message).toBeTruthy();
         done();
       });
     });
@@ -150,7 +150,7 @@ describe('Users endpoints', () => {
         .expect(404)
         .end((err, res) => {
           expect(err).toBeNull();
-          expect(res.body.message).toBeTruthy();
+          expect(res.body.error.message).toBeTruthy();
           done();
         });
       }, done.fail);
@@ -166,7 +166,7 @@ describe('Users endpoints', () => {
         .expect(200)
         .end((err, res) => {
           expect(err).toBeNull();
-          expect(res.body.name).toBe('hero baby');
+          expect(res.body.data.user.name).toBe('hero baby');
           users.findOne({ _id: ObjectID(id) }).then((user) => {
             expect(user).toBeNull();
             done();
@@ -182,7 +182,7 @@ describe('Users endpoints', () => {
         .expect(404)
         .end((err, res) => {
           expect(err).toBeNull();
-          expect(res.body.message).toBeTruthy();
+          expect(res.body.error.message).toBeTruthy();
           done();
         });
       }, done.fail);

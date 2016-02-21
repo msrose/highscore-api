@@ -12,11 +12,11 @@ module.exports = (app) => {
 
   app.route('/users')
     .get(users.index)
-    .post(users.create);
+    .post(users.validateBody, users.create);
 
   app.route('/users/:userId')
     .get(users.show)
-    .put(users.update)
+    .put(users.validateBody, users.update)
     .delete(users.delete);
 
   app.param('userId', middleware.validateId('userId'));

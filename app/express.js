@@ -30,7 +30,7 @@ module.exports = () => {
       logger.error(err.stack);
     }
     req.responseError = {
-      message: err.message || 'Something went wrong!',
+      message: err.message || 'Something went wrong!'
     };
     next();
   });

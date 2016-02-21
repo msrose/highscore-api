@@ -4,6 +4,7 @@ const helper = require('./specHelper');
 const request = helper.request;
 const db = helper.db;
 const app = helper.app;
+const factories = helper.factories;
 const ObjectID = helper.ObjectID;
 const users = db.collection('users');
 
@@ -12,26 +13,37 @@ describe('Users endpoints', () => {
     it('adds a user when given valid attributes', (done) => {
       request(app)
       .post('/users')
-      .send({ name: 'michael' })
+      .send({
+        username: 'msrose',
+        first_name: 'Michael',
+        last_name: 'Rose',
+        email: 'michael@example.com'
+      })
       .expect(200)
       .end((err, res) => {
         expect(err).toBeNull();
-        expect(res.body.data.user.name).toBe('michael');
-        expect(res.body.data.user._id).toBeTruthy();
-        users.findOne({ _id: ObjectID(res.body.data.user._id) }).then((user) => {
-          expect(user.name).toBe('michael');
-        }).then(done, done.fail);
+        let expectedBody = jasmine.objectContaining({
+          username: 'msrose',
+          first_name: 'Michael',
+          last_name: 'Rose',
+          email: 'michael@example.com'
+        });
+        let user = res.body.data && res.body.data.user || {};
+        expect(user).toEqual(expectedBody);
+        users.findOne({ _id: ObjectID(user._id) }).then((user) => {
+          expect(user).toEqual(expectedBody);
+        }).then(done).catch(done.fail);
       });
     });
 
-    it('does not add a user when not given attributes', (done) => {
+    it('does not add a user when not given bad attributes', (done) => {
       request(app)
       .post('/users')
-      .send({ llamas: 'michael' })
+      .send(factories.User({ llamas: 'michael' }))
       .expect(400)
       .end((err, res) => {
         expect(err).toBeNull();
-        expect(res.body.error.message).toBeTruthy();
+        expect(res.body.error && res.body.error.message).toBeTruthy();
         done();
       });
     });
@@ -39,11 +51,23 @@ describe('Users endpoints', () => {
     it('does not add a user with invalid attributes', (done) => {
       request(app)
       .post('/users')
-      .send({ llamas: 'michael' })
+      .send(factories.User({ first_name: '' }))
       .expect(400)
       .end((err, res) => {
         expect(err).toBeNull();
-        expect(res.body.error.message).toBeTruthy();
+        expect(res.body.error && res.body.error.message).toBeTruthy();
+        done();
+      });
+    });
+
+    it('requires all of the attributes to be present', (done) => {
+      request(app)
+      .post('/users')
+      .send({ first_name: 'llama' })
+      .expect(400)
+      .end((err, res) => {
+        expect(err).toBeNull();
+        expect(res.body.error && res.body.error.message).toBeTruthy();
         done();
       });
     });
@@ -51,7 +75,8 @@ describe('Users endpoints', () => {
 
   describe('GET /users', () => {
     beforeEach((done) => {
-      users.insertOne({ name: 'hero boy' }).then(done, done.fail);
+      users.insertOne(factories.User({ first_name: 'hero boy' }))
+      .then(done).catch(done.fail);
     });
 
     it('gets a list of the users', (done) => {
@@ -60,7 +85,9 @@ describe('Users endpoints', () => {
       .expect(200)
       .end((err, res) => {
         expect(err).toBeNull();
-        let names = res.body.data.users.map(user => user.name);
+        let names = res.body.data &&
+          res.body.data.users &&
+          res.body.data.users.map(user => user.first_name);
         expect(names).toContain('hero boy');
         done();
       });
@@ -69,14 +96,15 @@ describe('Users endpoints', () => {
 
   describe('GET /users/:userId', () => {
     it('gets the user with the given id', (done) => {
-      users.insertOne({ name: 'hero baby' }).then((result) => {
+      users.insertOne(factories.User({ first_name: 'hero baby' })).then((result) => {
         let id = result.ops[0]._id;
         request(app)
         .get('/users/' + id)
         .expect(200)
         .end((err, res) => {
           expect(err).toBeNull();
-          expect(res.body.data.user.name).toBe('hero baby');
+          let firstName = res.body.data && res.body.data.user && res.body.data.user.first_name;
+          expect(firstName).toBe('hero baby');
           done();
         });
       }, done.fail);
@@ -88,7 +116,7 @@ describe('Users endpoints', () => {
       .expect(400)
       .end((err, res) => {
         expect(err).toBeNull();
-        expect(res.body.error.message).toBeTruthy();
+        expect(res.body.error && res.body.error.message).toBeTruthy();
         done();
       });
     });
@@ -100,7 +128,7 @@ describe('Users endpoints', () => {
         .expect(404)
         .end((err, res) => {
           expect(err).toBeNull();
-          expect(res.body.error.message).toBeTruthy();
+          expect(res.body.error && res.body.error.message).toBeTruthy();
           done();
         });
       }, done.fail);
@@ -111,33 +139,60 @@ describe('Users endpoints', () => {
     let user;
 
     beforeEach((done) => {
-      users.insertOne({ name: 'hero boy' }).then((result) => {
+      users.insertOne(factories.User({
+        first_name: 'old name'
+      })).then((result) => {
         user = result.ops[0];
-      }).then(done, done.fail);
+      }).then(done).catch(done.fail);
     });
 
     it('updates the user attributes correctly', (done) => {
       request(app)
       .put('/users/' + user._id)
-      .send({ name: 'new name' })
+      .send(factories.User({ first_name: 'new name' }))
       .expect(200)
       .end((err, res) => {
         expect(err).toBeNull();
-        expect(res.body.data.user.name).toBe('new name');
-        users.findOne({ _id: ObjectID(res.body.data.user._id) }).then((user) => {
-          expect(user.name).toBe('new name');
-        }).then(done, done.fail);
+        let user = res.body.data && res.body.data.user || {};
+        expect(user.first_name).toBe('new name');
+        users.findOne({ _id: ObjectID(user._id) }).then((user) => {
+          expect(user.first_name).toBe('new name');
+        }).then(done).catch(done.fail);
       });
     });
 
     it('does not allow invalid attributes', (done) => {
       request(app)
       .put('/users/' + user._id)
-      .send({ name: '' })
+      .send(factories.User({ first_name: '' }))
       .expect(400)
       .end((err, res) => {
         expect(err).toBeNull();
-        expect(res.body.error.message).toBeTruthy();
+        expect(res.body.error && res.body.error.message).toBeTruthy();
+        done();
+      });
+    });
+
+    it('does not add a user when not given bad attributes', (done) => {
+      request(app)
+      .put('/users/' + user._id)
+      .send(factories.User({ llamas: 'michael' }))
+      .expect(400)
+      .end((err, res) => {
+        expect(err).toBeNull();
+        expect(res.body.error && res.body.error.message).toBeTruthy();
+        done();
+      });
+    });
+
+    it('requires all of the attributes to be present', (done) => {
+      request(app)
+      .put('/users/' + user._id)
+      .send({ first_name: 'michael' })
+      .expect(400)
+      .end((err, res) => {
+        expect(err).toBeNull();
+        expect(res.body.error && res.body.error.message).toBeTruthy();
         done();
       });
     });
@@ -146,11 +201,11 @@ describe('Users endpoints', () => {
       users.drop().then(() => {
         request(app)
         .put('/users/56c284724e68ce93245de5d2')
-        .send({ name: 'llama man' })
+        .send(factories.User())
         .expect(404)
         .end((err, res) => {
           expect(err).toBeNull();
-          expect(res.body.error.message).toBeTruthy();
+          expect(res.body.error && res.body.error.message).toBeTruthy();
           done();
         });
       }, done.fail);
@@ -159,14 +214,15 @@ describe('Users endpoints', () => {
 
   describe('DELETE /users/:userId', () => {
     it('removes the user from the database', (done) => {
-      users.insertOne({ name: 'hero baby' }).then((result) => {
+      users.insertOne(factories.User({ first_name: 'hero baby' })).then((result) => {
         let id = result.ops[0]._id;
         request(app)
         .delete('/users/' + id)
         .expect(200)
         .end((err, res) => {
           expect(err).toBeNull();
-          expect(res.body.data.user.name).toBe('hero baby');
+          let firstName = res.body.data && res.body.data.user && res.body.data.user.first_name;
+          expect(firstName).toBe('hero baby');
           users.findOne({ _id: ObjectID(id) }).then((user) => {
             expect(user).toBeNull();
             done();
@@ -182,7 +238,7 @@ describe('Users endpoints', () => {
         .expect(404)
         .end((err, res) => {
           expect(err).toBeNull();
-          expect(res.body.error.message).toBeTruthy();
+          expect(res.body.error && res.body.error.message).toBeTruthy();
           done();
         });
       }, done.fail);

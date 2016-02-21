@@ -1,13 +1,16 @@
 'use strict';
 
-const request = require('supertest');
-const db = require('../app/mongo')();
-const app = require('../app/express')();
 const ObjectID = require('mongodb').ObjectID;
+const request = require('supertest');
+
+const app = require('../app/express')();
+const db = require('../app/mongo')();
+const factories = require('./factories');
 
 module.exports = {
+  ObjectID,
   request,
-  db,
   app,
-  ObjectID
+  db,
+  factories
 };

@@ -13,11 +13,36 @@ exports.index = (req, res, next) => {
   });
 };
 
-exports.create = (req, res, next) => {
-  if(!req.body.name) {
-    return next({ status: 400, message: 'Name required' });
+exports.validateBody = (req, res, next) => {
+  let attrs = {
+    first_name: {
+      validate: (value) => value !== undefined && value !== null && value !== ''
+    },
+    last_name: {
+      validate: (value) => value !== undefined && value !== null && value !== ''
+    },
+    username: {
+      validate: (value) => value !== undefined && value !== null && value !== ''
+    },
+    email: {
+      validate: (value) => value.length >= 3 && value.indexOf('@') !== -1
+    }
+  };
+  for(let prop in req.body) {
+    if(!attrs[prop]) {
+      return next({ status: 400, message: `Unexpected attribute "${prop}" in request body` });
+    }
   }
-  let user = { name: req.body.name };
+  for(let prop in attrs) {
+    if(!attrs[prop].validate(req.body[prop])) {
+      return next({ status: 400, message: `Invalid value for attribute "${prop}"` });
+    }
+  }
+  next();
+};
+
+exports.create = (req, res, next) => {
+  let user = req.body;
   users.insertOne(user).then((result) => {
     req.responseData = { user: result.ops[0] };
     next();
@@ -41,13 +66,10 @@ exports.show = (req, res, next) => {
 };
 
 exports.update = (req, res, next) => {
-  if(!req.body.name) {
-    return next({ status: 400, message: 'Must provide a valid name' });
-  }
   let id = req.user._id;
   let params = [
     { _id: id },
-    { $set: { name: req.body.name } },
+    { $set: req.body },
     { returnOriginal: false }
   ];
   users.findOneAndUpdate.apply(users, params).then((result) => {

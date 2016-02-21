@@ -16,7 +16,8 @@ gulp.task('start', () => {
 });
 
 gulp.task('test', (done) => {
-  spawn('node', ['spec/support/runner'], { stdio: 'inherit' }).on('close', done);
+  spawn('node', ['spec/support/runner'], { stdio: 'inherit' })
+    .on('close', done);
 });
 
 gulp.task('lint', () => {

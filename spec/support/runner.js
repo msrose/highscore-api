@@ -5,7 +5,7 @@ process.env.NODE_ENV = 'test';
 const Jasmine = require('jasmine');
 
 const config = require('../../config/config');
-const ConsoleReporter = require('../reporters/console');
+const ConsoleReporter = require('jasmine-console-reporter');
 
 let jasmine = new Jasmine();
 let reporter = new ConsoleReporter({ cleanStack: 3 });

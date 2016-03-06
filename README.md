@@ -30,3 +30,15 @@ Run the tests:
 ```
 npm test
 ```
+
+Generate a migration:
+
+```
+node ./node_modules/mongodb-migrate create -runmm create name-of-migration
+```
+
+Run migrations for `env` environment (default is development):
+
+```
+NODE_ENV=env gulp migrate
+```

@@ -23,10 +23,11 @@ connect(config.mongoUrl, (err, db) => {
   if(err) {
     return console.error('Could not connect to mongo');
   }
-  db.dropDatabase((err, result) => {
-    if(err) {
-      return console.error('Could not drop testing database.');
-    }
+  db.collections().then((collections) => {
+    return Promise.all(collections.map((c) => c.deleteMany({})));
+  }).then(() => {
     jasmine.execute();
+  }).catch((err) => {
+    console.error('Could not drop testing database.');
   });
 });

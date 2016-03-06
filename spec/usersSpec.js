@@ -71,6 +71,36 @@ describe('Users endpoints', () => {
         done();
       });
     });
+
+    it('requires a unique username', (done) => {
+      let user = factories.User();
+      users.insertOne(user).then((result) => {
+        request(app)
+        .post('/users')
+        .send(factories.User({ username: user.username }))
+        .expect(400)
+        .end((err, res) => {
+          expect(err).toBeNull();
+          expect(res.body.error && res.body.error.message).toBeTruthy();
+          done();
+        });
+      }, done.fail);
+    });
+
+    it('requires a unique email', (done) => {
+      let user = factories.User();
+      users.insertOne(user).then((result) => {
+        request(app)
+        .post('/users')
+        .send(factories.User({ email: user.email }))
+        .expect(400)
+        .end((err, res) => {
+          expect(err).toBeNull();
+          expect(res.body.error && res.body.error.message).toBeTruthy();
+          done();
+        });
+      }, done.fail);
+    });
   });
 
   describe('GET /users', () => {

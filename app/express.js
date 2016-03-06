@@ -25,8 +25,13 @@ module.exports = () => {
     if(res.headersSent) {
       return next(err);
     }
+    //duplicate value on unique index
+    if(err.name === 'MongoError' && err.code === 11000) {
+      err.status = 400;
+      err.message = err.errmsg;
+    }
     req.responseStatus = err.status || 500;
-    if(req.responseStatus >= 500) {
+    if(req.responseStatus >= 500 && config.logErrors) {
       logger.error(err.stack);
     }
     req.responseError = {
